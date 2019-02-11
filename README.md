@@ -1,4 +1,4 @@
-# pitch-app
+## Pitch Application
 
 This python web-app was created in order to allow users to pitch their ideas and have them voted on.
 Date: 8th February 2019
