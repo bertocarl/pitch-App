@@ -1,95 +1,41 @@
-from flask import render_template,request,redirect,url_for,abort
+from flask import render_template,request,redirect,url_for,abort,flash
 from . import main
-from .forms import PitchForm,UpdateProfile,ReviewForm
-from ..import db,photos
-from ..models import User,Pitch,Review
 from flask_login import login_required,current_user
+from ..models import User,Blog,Comment,Category,Subscribe
+from .forms import UpdateProfile,BlogForm,CommentForm,SubscribeForm
+from .. import db
+from ..email import mail_message
 import markdown2
 
-#Views
-@main.route("/")
+@main.route('/')
 def index():
-    """
-    View root page function that return the index page and its data
-    """
-    pitches = Pitch.query.all()
+    '''
+    View root page function that returns the index page and its data
+    '''
+    
+    title = 'Home of the best Blogs'
 
-    title = "Home - Welcome to my Pitch"
-    return render_template('index.html',title=title,pitches=pitches)
-
-@main.route("/post",methods=['GET','POST'])
-@login_required
-def post():
-    form = PitchForm()
-    if form.validate_on_submit():
-        title = form.title.data
-        pitch = form.pitch.data
-        category= form.category.data
-        like=0
-        dislike=0
-
-        # Updated pitch instance
-        new_pitch = Pitch(pitch_title=title,pitch_body=pitch,category=category,like=like,dislike=dislike,user=current_user)
-
-        # save pitch method
-        new_pitch.save_pitch()
-        return redirect(url_for('main.post'))
-
-    title="Post your pitch"
-    return render_template('post.html',title=title,pitch_form=form)
-
-@main.route('/pitch_review/<int:id>',methods=['GET','POST'])
-@login_required
-def pitch_review(id):
-    pitch=Pitch.query.get_or_404(id)
-    comment= Review.query.all()
-    form=ReviewForm()
-
-    if request.args.get("like"):
-        pitch.like = pitch.like+1
-
-        db.session.add(pitch)
-        db.session.commit()
-
-        return redirect("/pitch_review/{pitch_id}".format(pitch_id=pitch.id))
-
-    elif request.args.get("dislike"):
-        pitch.dislike=pitch.dislike+1
-
-        db.session.add(pitch)
-        db.session.commit()
-
-        return redirect("/pitch_review/{pitch_id}".format(pitch_id=pitch.id))
-
-    if form.validate_on_submit():
-        review = form.review.data
-
-        new_review = Review(id=id,review=review,user_id=current_user.id)
-
-        new_review.save_review()
-        return redirect(url_for('main.pitch_review',id=id))
-    reviews = Review.query.all()
-    return render_template('pitch_review.html',comment=comment,pitch=pitch,review_form=form,reviews=reviews)
+    return render_template('index.html',title=title)
 
 @main.route('/user/<uname>')
 def profile(uname):
     user=User.query.filter_by(username=uname).first()
-    pitches = Pitch.query.filter_by(user_id=user.id).all()
 
     if user is None:
         abort(404)
 
-    return render_template("profile/profile.html",user=user,pitches=pitches)
+    title = "Profile Page"
 
-@main.route('/user/<uname>/update',methods=['GET','POST'])
+    return render_template("profile/profile.html",title = title,user = user)
+
+@main.route('/user/<uname>/update',methods = ['GET','POST'])
 @login_required
 def update_profile(uname):
-    user = User.query.filter_by(username = uname).first()
+    user = User.query.filter_by(username=uname).first()
     if user is None:
         abort(404)
 
     form = UpdateProfile()
-
     if form.validate_on_submit():
         user.bio = form.bio.data
 
@@ -97,17 +43,84 @@ def update_profile(uname):
         db.session.commit()
 
         return redirect(url_for('.profile',uname=user.username))
-
     return render_template('profile/update.html',form=form)
 
-@main.route('/user/<uname>/update/pic',methods=['POST'])
+@main.route('/user/<uname>/update/pic',methods= ['POST'])
 @login_required
 def update_pic(uname):
     user = User.query.filter_by(username = uname).first()
     if 'photo' in request.files:
-        filename= photos.save(request.files['photo'])
+        filename = photos.save(request.files['photo'])
         path = f'photos/{filename}'
         user.profile_pic_path = path
         db.session.commit()
-
     return redirect(url_for('main.profile',uname=uname))
+
+@main.route('/blog/new',methods=['GET','POST'])
+@login_required
+def new_blog():
+    form = BlogForm()
+    if form.validate_on_submit():
+        title=form.title.data
+        post=form.post.data
+        new_blog=Blog(title=title,post=post,user=current_user)
+        new_blog.save_blog()
+        subscribers= Subscribe.query.all()
+        print(subscribers)
+        for subscriber in subscribers:
+            print(subscriber.email)
+            # mail_message("New Blog Alert!!", "email/new_blog", subscriber.email)
+        #     mail_message("New Blog Notice!!","email/new_blog",subscriber.email, subscriber=subscriber)
+        return redirect(url_for('main.index'))
+    return render_template('new_blog.html',blog_form = form)
+    
+@main.route('/blog/<int:id>')
+def see_blogs(id):
+    form=BlogForm()
+    user=User.query.filter_by(id=id).first()
+    blog= Blog.query.filter_by(id=id).first()
+
+    comments = Comment.get_blog_comments(id)
+
+
+    title = 'Home of the best Blogs'
+    return render_template('blog.html',comments = comments,title = title,blog = blog,blog_form = form,user = user)
+
+@main.route('/comment/new/<int:id>',methods=['GET','POST'])
+def new_comment(id):
+    blog=Blog.query.filter_by(id=id).first()
+
+    if blog is None:
+        abort(404)
+    form = CommentForm()
+
+    if form.validate_on_submit():
+        name = form.name.data
+        comment_itself = form.comment_itself.data
+        new_comment = Comment(comment_itself = comment_itself,name = name,blog = blog)
+        new_comment.save_comment()
+
+        return redirect(url_for('main.see_blogs',id = blog.id))
+
+    title='Comment Section'
+
+    return render_template('new_comment.html',title = title,comment_form = form)
+
+@main.route('/subscribe',methods=["GET","POST"])
+def subscribe():
+    form=SubscribeForm()
+
+    if form.validate_on_submit():
+        subscriber = Subscribe(email=form.email.data)
+
+        db.session.add(subscriber)
+        db.session.commit()
+
+        # mail_message("Welcome to The Home of the best Blogs","email/subscribe_user",subscriber.email,subscriber=subscriber)
+        # flash('A subscription confirmation has been sent to you via email')
+
+        return redirect(url_for('main.index'))
+
+        title = 'Subscribe Now'
+
+    return render_template('subscription.html',subscribe_form = form)

@@ -1,55 +1,157 @@
 {% extends 'base.html' %}
-{% import 'macros.html' as macro%}
-
-<!-- Styles block -->
-{% block styles%}
-    {{ super() }}
-    <link rel="stylesheet" href="{{url_for('static',filename='css/index.css')}}">
-    <link rel="shortcut icon" href="https://icon2.kisspng.com/20180320/upw/kisspng-computer-icons-idea-incandescent-light-bulb-clip-a-black-idea-icon-5ab0cae1715936.7716735415215357134643.jpg">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" >
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css?family=Slabo+27px" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Bad+Script|Indie+Flower|Loved+by+the+King|Srisakdi" rel="stylesheet">
-{% endblock %}
-
+{% import 'macros.html' as macro %}
 {% block content %}
-<div class="jumbotron">
-</div>
-<div class="text-center">
-<a href="/post" class="btn btn-danger btn-lg">Create Pitch</a>
-</div>
-<br>
 
-  {% for pitch in pitches  %}
-  <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-       <div class="panel">
-       <div class="panel-body">
-           <h2>{{ pitch.pitch_title }}</h2>
-           <h4>{{ pitch.category}}</h4>
+<body>
+    <div class="container color">
+        <br>
+        <br>
+        <br>
+        <br>
+        <div class="jumbotron">
+            <h2 class="head">PITCH CATEGORIES</h2>
+        </div>
+        <br>
+        <div class="row col-sm-9 col-xs-9 col-md-8 col-lg-8">
+            <br>
+            <div class="thumbnail blogs">
+                <h3><b>Dream Blogs</b></h3>
+                <img src="static/photos/dreams.jpg" alt="">
+                <br>
+                <p>Every great dream begins with a dreamer. Always remember, you have within you the strength, the
+                    patience, and the passion to reach for the stars to change the world.
+                    Read more at: 
+                    <a href=https://www.brainyquote.com/quotes/harriet_tubman_310306?src=t_dreams></a></p>
+                <br>
+            </div>
+            <div class="thumbnail blogs">
+                <h3><b>Succeed Blogs</b></h3>
+                <img src="static/photos/succeed.jpg" alt="">
+                <br>
+                <p>"There are two types of people who will tell you that you cannot make a difference in this world:
+                    those who are afraid to try and those who are afraid you will succeed."
 
-           <p>{{ pitch.pitch_body }}</p>
-           <div class="text-center">
-             <div class="col-md-6">
-            <a href="/pitch_review/{{pitch.id}}?like=1" ><i   class="fas fa-thumbs-up"> {{pitch.like}}</i></a>
-           </div>
-           <div class="col-md-6">
-            <a href="/pitch_review/{{pitch.id}}?dislike=1"> <i  class="fas fa-thumbs-down">  {{ pitch.dislike}}</i></a>
-           </div>
-           </div>
+                </p>
+                <br>
+            </div>
+            <div class="thumbnail blogs">
+                <h3><b>Motivational Blogs</b></h3>
+                <img src="static/photos/quote.jpg" alt="">
+                <br>
+                <p>“Believe in yourself! Have faith in your abilities! Without a humble but reasonable confidence in
+                    your own powers you cannot be successful or happy.” —Norman Vincent Peale</p>
+                <br>
+            </div>
+            <div class="thumbnail blogs">
+                <h3><b>Hardwork Blogs</b></h3>
+                <img src="static/photos/hardwork.jpg" alt="">
+                <br>
+                <p>A dream doesn't become reality through magic; it takes sweat, determination and hard work.
+                   Read more at:
+                   <a href=https://www.brainyquote.com/quotes/colin_powell_385927?src=t_hard_work></a></p>
+                <br>
+            </div>
+        </div>
+        <div class="row col-sm-1 col-xs-1 col-md-1 col-lg-1"></div>
+        <div class="row col-sm-2 col-xs-2 col-md-3 col-lg-3" style="border-left: 3px black">
+            <!-- <div class="button btn btn-success">
+                        <a href="/subscribe" class="subscribe">Subscribe Here:</a>
+                    </div> -->
+            <br>
+            <br>
+            <!-- <div class="col-md-6"> -->
+            <div class="thumbnail">
+                <h2 class="view">View Posted Blogs:</h2>
+                {{macro.displayBlog(blogs)}}
+                <!-- <div class="col-md-3"> -->
+                    <!-- <div class="container"> -->
+                        <form button="submitQuote()" #blogForm=''>
+                      <div class="form-group">
+                        <label for="name"> Your Blog :</label>
+                        <textarea class="form-control" id="name" rows="4" name="name"></textarea>
+                      </div>
+                      <div class="form-group">
+                        <label for="author">Blog author:</label>
+                        <input type="text" class="form-control" id="author" name="name">
+                      </div>
+                      <div class="form-group">
+                        <label for="fan">Written by:</label>
+                          <input type="text" class="form-control" id="fan" name="name">
+                      </div>
+                      <button type="submit" id="go">Pitch</button>
+                        </form>
+                       <!-- </div>
+                </div> -->
+            </div>
+            <!-- </div> -->
 
-           <blockquote >
-             <footer>Posted by:
-               <cite > {{ pitch.user.username}}</cite>
-               on
-               <cite > {{ pitch.posted.strftime('%Y-%m-%d')}}</cite>
-             </footer>
-           </blockquote>
-           <div class="text-center">
-           <a href="/pitch_review/{{pitch.id}}" class="btn btn-primary">Comment</a>
-         </div>
-         </div>
-       </div>
-     </div>
-   {% endfor %}
+
+
+
+        </div>
+    </div>
+</body>
+
+
+
+<style>
+    @import url('https://fonts.googleapis.com/css?family=Nunito');
+
+    body {
+        background-color: #000f08;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .head {
+        color:#fed766;
+        font-family: 'Nunito', sans-serif !important;
+        font-size: 40px;
+        text-align: center;
+
+    }
+
+    .subscribe {
+        font-family: 'Nunito', sans-serif !important;
+    }
+
+    .blogs {
+        font-family: 'Nunito', sans-serif !important;
+        width: 620px;
+        color: #fed766 !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+        transition: all 0.3s ease 0s;
+        cursor: pointer;
+    }
+
+    .blogs:hover {
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+        transform: translateY(-7px);
+    }
+
+    p {
+        font-size: 15px;
+    }
+
+    h3 {
+        text-decoration-line: underline;
+    }
+
+    .view {
+        text-decoration-line: underline;
+        font-family: 'Nunito', sans-serif !important;
+    }
+
+    .thumbnail {
+        text-align: center;
+    }
+
+    .color {
+        color:#fed766 !important;
+        font-family: 'Nunito', sans-serif !important;
+
+    }
+</style>
 {% endblock %}

@@ -1,18 +1,20 @@
-## Pitch Application
+# Pitch
 
 This python web-app was created in order to allow users to pitch their ideas and have them voted on.
+
 Date: 8th February 2019
+
 By: Albert Carlos Omware
 
 ## Description
 This web-app allows the user to submit their pitches,have them voted and commented upon.
 
 ## Setup/Installation Requirements
-* Live site can be accessed from the following link https://pitch60app.herokuapp.com/
+* Live site can be accessed from the following link https://pitch60.herokuapp.com/
 
 
 ### Known Bugs
-No known bugs but feel free to contact me on aomware@gmail.com
+No known bugs at the moment, please feel free to contact me if any @bertocarl and aomware@gmail.com
 
 ### Behaviour Driven Development
 * The program should return all pitches on the home page<br>
@@ -45,8 +47,8 @@ Then: The value is added to the number of likes/dislikes<br>
 
 ### Support and contact details
 * Contact me through my email: aomware@gmail.com
-
+* The source code is also contained within the folder containing this ReadMe with comments on the code thus third-party support can be offered.
 
 ### License
 Moringa School
-Copyright (c)2018 **Albert Carlos Omware**
+Copyright (c)2019 **Albert Carlos Omware**
