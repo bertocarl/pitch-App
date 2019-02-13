@@ -19,7 +19,7 @@ class Config:
     MAIL_USER_TLS = True
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
-    SQLALCHEMY_DATABASE_URI='postgresql+psycopg2://berto:fiddlediddle@localhost/pitch'
+    SQLALCHEMY_DATABASE_URI='postgresql+psycopg2://postgres:fiddlediddle@localhost/pitch'
 
     # simple mde  configurations
     SIMPLEMDE_JS_IIFE = True
